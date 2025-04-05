@@ -1,6 +1,8 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const Product = require('./models/productModel')
+require('dotenv').config(); 
+
 const app = express()
 
 app.use(express.json())
@@ -13,7 +15,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/blog', (req, res) => {
-    res.send('Hello Blog, My name is Devtamin')
+    res.send('Hello ClassXYZ')
 })
 
 app.get('/products', async(req, res) => {
@@ -39,7 +41,7 @@ app.get('/products/:id', async(req, res) =>{
 app.post('/products', async(req, res) => {
     try {
         const product = await Product.create(req.body)
-        res.status(200).json(product);
+        res.status(200).send('Got a new product');
         
     } catch (error) {
         console.log(error.message);
@@ -58,7 +60,7 @@ app.put('/products/:id', async(req, res) => {
         }
         const updatedProduct = await Product.findById(id);
         res.status(200).json(updatedProduct);
-        
+
     } catch (error) {
         res.status(500).json({message: error.message})
     }
@@ -80,14 +82,19 @@ app.delete('/products/:id', async(req, res) =>{
     }
 })
 
-mongoose.set("strictQuery", false)
-mongoose.
-connect('mongodb+srv://admin:12345678Admin@devtaminapi.zpncstm.mongodb.net/Node-API?retryWrites=true&w=majority')
+
+
+
+mongoose.set("strictQuery", false);
+
+mongoose
+.connect(process.env.MONGODB_URI)
 .then(() => {
-    console.log('connected to MongoDB')
-    app.listen(3000, ()=> {
-        console.log(`Node API app is running on port 3000`)
+    console.log('Connected to MongoDB');
+    app.listen(process.env.PORT, () => {
+        console.log(`Node API app is running on port `, process.env.PORT);
     });
-}).catch((error) => {
-    console.log(error)
 })
+.catch((error) => {
+    console.log(error);
+});
